@@ -36,7 +36,7 @@ var fetchConfluenceInlineTasks = () => {
         tasks.forEach( (task, index) => {
           todos.push({
             origin: 'Confluence',
-            title: task.title, 
+            title: task.title,
             sourceTitle: task.item.title,
             sourceUrl: task.item.url,
             details: null,
@@ -118,10 +118,10 @@ var fetchTrelloNotifications = () => {
                 var title: string;
                 if (data.listBefore) {
                   title = 'Card `' + cardFullName + '` moved from list `' + notification.data.listBefore + '`';
-                } 
+                }
                 else if (data.old && data.old.due !== undefined) { // data.old.due may be null
                   title = 'Card `' + cardFullName + '` changed due to ' + data.card.due + ' (was ' + data.old.due + ')';
-                } 
+                }
                 else if (data.old && data.old.closed !== undefined) {
                   if (data.old.closed === true) {
                     title = 'Card `' + cardFullName + '` archived';

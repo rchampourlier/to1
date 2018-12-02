@@ -14,7 +14,8 @@
     "typescript": "^3.2.1"
   },
   "scripts": {
-    "test": "mocha"
+    "start": "node dist/main.js",
+    "build": "npx tsc"
   },
   "repository": {
     "type": "git",

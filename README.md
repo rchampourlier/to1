@@ -6,13 +6,14 @@ A basic solution to bring all your TODOs to a single place.
 
 ```
 source .env
-tsc main.ts; node main.js
+npm run build
+npm run start
 ```
 
 ## How to develop
 
-```
-npm install -g typescript
+```sh
+npm run build
 ```
 
 ## Contributions
