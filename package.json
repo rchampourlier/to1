@@ -1,0 +1,29 @@
+{
+  "name": "to1",
+  "version": "1.0.0",
+  "description": "A basic solution to bring all your TODOs to a single place.",
+  "main": "main.js",
+  "dependencies": {
+    "@types/request": "^2.48.1",
+    "chai": "^4.2.0",
+    "request": "^2.88.0",
+    "ts-node": "^7.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.11",
+    "typescript": "^3.2.1"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rchampourlier/to1.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rchampourlier/to1/issues"
+  },
+  "homepage": "https://github.com/rchampourlier/to1#readme"
+}
