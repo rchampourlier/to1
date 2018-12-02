@@ -5,17 +5,21 @@
   "main": "main.js",
   "dependencies": {
     "@types/request": "^2.48.1",
-    "chai": "^4.2.0",
     "request": "^2.88.0",
     "ts-node": "^7.0.1"
   },
   "devDependencies": {
+    "@types/jest": "^23.3.10",
     "@types/node": "^10.12.11",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.5",
     "typescript": "^3.2.1"
   },
   "scripts": {
     "start": "node dist/main.js",
-    "build": "npx tsc"
+    "build": "npx tsc",
+    "test": "npx jest --verbose",
+    "test-watch": "npx jest --verbose --watchAll"
   },
   "repository": {
     "type": "git",
