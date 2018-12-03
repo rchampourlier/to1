@@ -5,6 +5,7 @@ A basic solution to bring all your TODOs to a single place.
 ## How to use
 
 ```
+cp .env.example .env # and modify it
 source .env
 npm run build
 npm run start
@@ -18,7 +19,7 @@ npm run build
 
 ## Contributions
 
-Are welcome
+Are welcome :)
 
 ## Liense
 
