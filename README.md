@@ -7,15 +7,16 @@ A basic solution to bring all your TODOs to a single place.
 ```
 cp .env.example .env # and modify it
 source .env
-npm run build
-npm run start
+npm start
 ```
 
 ## How to develop
 
 ```sh
-npm run build
+npm start
 ```
+
+Check [electron-forge](https://v6.electronforge.io) for more information.
 
 ## Contributions
 
