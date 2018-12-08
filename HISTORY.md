@@ -6,6 +6,8 @@ Used [electron-forge](https://v6.electronforge.io) with the `react-typescript` t
 
 This new setup is working fine, the `fetch` module was successfully imported from `app.tsx` and also enables live-reload.
 
+Achieved displaying fetched Trello notifications in the Electron's window.
+
 ## 2018-12-02
 
 - Started project

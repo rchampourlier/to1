@@ -48,6 +48,7 @@
   },
   "dependencies": {
     "@types/electron-devtools-installer": "^2.2.0",
+    "@types/node": "^10.12.12",
     "@types/react": "^0.14.57",
     "@types/react-dom": "^0.14.23",
     "@types/request": "^2.48.1",
