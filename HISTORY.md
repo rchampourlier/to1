@@ -8,6 +8,8 @@ This new setup is working fine, the `fetch` module was successfully imported fro
 
 Achieved displaying fetched Trello notifications in the Electron's window.
 
+Added Bulma for a nice UI.
+
 ## 2018-12-02
 
 - Started project

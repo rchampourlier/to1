@@ -1,18 +1,15 @@
 import * as React from 'react';
 import { Todo, TrelloNotifications } from './fetch';
-
-interface ViewProps {
-  title: string;
-}
+import { TodoCard } from './todo_card';
 
 interface ViewState {
   todos: Array<Todo>;
 }
 
-class View extends React.Component<ViewProps, ViewState> {
+class View extends React.Component<undefined, ViewState> {
 
-  constructor(props: ViewProps) {
-    super(props);
+  constructor() {
+    super();
     let todos: Array<Todo> = [];
     this.state = {todos: todos};
   }
@@ -23,20 +20,16 @@ class View extends React.Component<ViewProps, ViewState> {
     });
   }
 
-  /*componentWillUnmount() {
-  }*/
-
   render() {
-    const todoListItems = this.state.todos.map((todo) => {
-      return <li key={todo.created}>{todo.title}</li>;
+    const todoCards = this.state.todos.map((todo) => {
+      return <TodoCard key={todo.created} title={todo.title} />;
     });
     return (
-      <div>
-        <h2>{this.props.title}</h2>
-        <ul>{todoListItems}</ul>
+      <div className='todos__cards'>
+        {todoCards}
       </div>
     );
   }
 }
 
-export { ViewProps, ViewState, View };
+export { ViewState, View };
