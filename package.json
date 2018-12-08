@@ -2,7 +2,7 @@
   "name": "to1",
   "productName": "to1",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "A basic solution to bring all your TODOs to a single place",
   "main": "src/index.ts",
   "scripts": {
     "start": "electron-forge start",
