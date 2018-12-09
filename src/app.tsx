@@ -1,14 +1,18 @@
 import * as React from 'react';
-import * as Fetch from './fetch';
+import { Header } from './header';
+import { Navbar } from './navbar';
+import { View } from './view';
 
-export class App extends React.Component<undefined, undefined> {
+class App extends React.Component<undefined, undefined> {
   render() {
     return (
       <div>
-        <h2>Welcome to React with Typescript!</h2>
+        <Header />
+        <Navbar />
+        <View />
       </div>
     );
   }
 }
 
-Fetch.fetchConfluenceInlineTasks();
+export { App };
