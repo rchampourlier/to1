@@ -1,32 +1,31 @@
 import * as React from 'react';
-import { Todo, TrelloNotifications } from './fetch';
-import { TodoCard } from './todo_card';
+import * as TrelloNotifications from './trello_notifications';
 
 interface ViewState {
-  todos: Array<Todo>;
+  trelloNotificationItems: Array<TrelloNotifications.Item>;
 }
 
 class View extends React.Component<undefined, ViewState> {
 
   constructor() {
     super();
-    let todos: Array<Todo> = [];
-    this.state = {todos: todos};
+    let trelloNotificationItems: Array<TrelloNotifications.Item> = [];
+    this.state = {trelloNotificationItems: trelloNotificationItems};
   }
 
   componentDidMount() {
-    TrelloNotifications().then((todos) => {
-      this.setState({todos: todos});
+    TrelloNotifications.Fetch().then((items) => {
+      this.setState({trelloNotificationItems: items});
     });
   }
 
   render() {
-    const todoCards = this.state.todos.map((todo) => {
-      return <TodoCard key={todo.created} title={todo.title} />;
+    const trelloNotificationCards = this.state.trelloNotificationItems.map((item) => {
+      return <TrelloNotifications.Card key={item.key} title={item.title} />;
     });
     return (
       <div className='todos__cards'>
-        {todoCards}
+        {trelloNotificationCards}
       </div>
     );
   }
