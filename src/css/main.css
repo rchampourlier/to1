@@ -1,16 +1,19 @@
-.todos__cards {
+body.has-navbar-fixed-top-with-rounded-tabs {
+  padding-top: 3.6rem;
+}
+
+.todo-cards {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
+  padding: 0 0.5rem;
 }
 
-.todos__card {
+.todo-card {
   position: relative; /* for the absolute positioning of the footer */
-  flex: 0 1 20%;
-}
-
-.todos__card .card-footer {
-  position: absolute; /* to keep at the bottom of the card */
-  bottom: 0;
-  width: 100%;
+  flex: 0 1 24%;
+  margin: 1% 1% 0 0;
+  background-color: #f5f6f7;
+  padding: 0.5rem;
+  border-radius: 3px;
 }

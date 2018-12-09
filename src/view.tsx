@@ -21,10 +21,10 @@ class View extends React.Component<undefined, ViewState> {
 
   render() {
     const trelloNotificationCards = this.state.trelloNotificationItems.map((item) => {
-      return <TrelloNotifications.Card key={item.key} title={item.title} />;
+      return TrelloNotifications.Card(item);
     });
     return (
-      <div className='todos__cards'>
+      <div className='todo-cards'>
         {trelloNotificationCards}
       </div>
     );

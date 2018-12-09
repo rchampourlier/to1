@@ -1,45 +1,71 @@
 import * as React from 'react';
 import * as request from 'request';
 
-interface Item {
-  key: string;
-  origin: string;
-  title: string;
-  sourceTitle: string;
-  sourceUrl: string;
-  details: string;
-  created: string;
-  due: string;
-}
-
-interface CardProps {
-  title: string;
-}
-
 const TRELLO_KEY = process.env.TRELLO_KEY;
 const TRELLO_TOKEN = process.env.TRELLO_TOKEN;
 
-class Card extends React.Component<CardProps, undefined> {
+interface Item {
+  key: string;
+  notificationType: string;
+  notificationCreated: string;
+  notificationInfo: string;
+  cardTitle: string;
+  cardUrl: string;
+  cardDue: string;
+  boardTitle: string;
+  boardUrl: string;
+}
+
+class CardComponent extends React.Component<Item, undefined> {
   render() {
+    let notificationTypeIconClassName = '';
+    switch (this.props.notificationType) {
+      case 'cardDueSoon':
+        notificationTypeIconClassName = 'far fa-calendar-alt';
+        break;
+      case 'mentionedOnCard':
+        notificationTypeIconClassName = 'fas fa-quote-left';
+        break;
+    }
+
     return (
-      <div className='todos__card card'>
-        <header className='card-header'>
-          <p className='card-header-title'>
-            {this.props.title}
-          </p>
-        </header>
-        <div className='card-content'>
-          <div className='content'>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
-          </div>
+      <div className='todo-card'>
+        <div className='trello-card'>
+          <span className='icon'>
+            <i className='fab fa-trello' />
+          </span>
+          <a href={this.props.cardUrl}>{this.props.cardTitle}</a>
+          <div>Due {this.props.cardDue}</div>
         </div>
-        <footer className='card-footer'>
-          <a href='#' className='card-footer-item'>Archive</a>
-          <a href='#' className='card-footer-item'>Pin</a>
-        </footer>
+        <div className='todo-card__context-link'>
+          <a href={this.props.boardUrl}>{this.props.boardTitle}</a>
+        </div>
+        <div className='todo-card__info'>
+          <span className='icon'>
+            <i className={notificationTypeIconClassName} />
+          </span>
+          {this.props.notificationInfo}
+        </div>
+        <div>{this.props.notificationCreated}</div>
       </div>
     );
   }
+}
+
+function Card(item: Item) {
+  return (
+    <CardComponent
+      key={item.key}
+      notificationType={item.notificationType}
+      notificationCreated={item.notificationCreated}
+      notificationInfo={item.notificationInfo}
+      cardTitle={item.cardTitle}
+      cardUrl={item.cardUrl}
+      cardDue={item.cardDue}
+      boardTitle={item.boardTitle}
+      boardUrl={item.boardUrl}
+    />
+  );
 }
 
 function Fetch(): Promise<Array<Item>> {
@@ -50,73 +76,74 @@ function Fetch(): Promise<Array<Item>> {
         'key': TRELLO_KEY,
         'token': TRELLO_TOKEN,
       }}, (error, response, body) => {
+
         if (error == null && response && response.statusCode === 200) {
-          console.log(body);
           let notifications = JSON.parse(body);
-          let cardFullName: string;
+
           notifications.forEach((notification: any) => {
             if (notification.unread) {
               let
                 data = notification.data,
-                board = data.board,
-                card = data.card,
                 itemKey = 'trello-notification__' + notification.type + '__' + notification.date;
 
               switch (notification.type) {
 
-                case 'makeAdminOfOrganization':
-                  items.push({
-                    key: itemKey,
-                    origin: 'Trello',
-                    title: 'Made admin of organization `' + data.organization.name,
-                    sourceTitle: '',
-                    sourceUrl: '',
-                    details: '',
-                    created: notification.date,
-                    due: '',
-                  });
-                  break;
-
                 case 'cardDueSoon':
                   items.push({
                     key: itemKey,
-                    origin: 'Trello',
-                    title: 'Card due soon',
-                    sourceTitle: board.name + ' > ' + card.name,
-                    sourceUrl: 'https://trello.com/c/' + card.shortLink,
-                    details: '',
-                    created: notification.date,
-                    due: card.due,
+                    notificationType: notification.type,
+                    notificationCreated: notification.date,
+                    notificationInfo: 'Due soon',
+                    cardTitle: data.card.name,
+                    cardUrl: 'https://trello.com/c/' + data.card.shortLink,
+                    cardDue: data.card.due,
+                    boardTitle: data.board.name,
+                    boardUrl: 'https://trello.com/b/' + data.board.shortLink,
                   });
                   break;
 
-                case 'commentCard':
+                case 'mentionedOnCard':
+                  console.log(notification);
+                  items.push({
+                    key: itemKey,
+                    notificationType: notification.type,
+                    notificationCreated: notification.date,
+                    notificationInfo: data.text,
+                    cardTitle: data.card.name,
+                    cardUrl: 'https://trello.com/c/' + data.card.shortLink,
+                    cardDue: data.card.due,
+                    boardTitle: data.board.name,
+                    boardUrl: 'https://trello.com/b/' + data.board.shortLink,
+                  });
+                  break;
+
+                /*case 'commentCard':
                   items.push({
                     key: itemKey,
                     origin: 'Trello',
                     title: 'Card `' + board.name + ' > ' + card.name + '` commented',
                     sourceTitle: board.name + ' > ' + card.name,
-                    sourceUrl: 'https://trello.com/c/' + card.shortLink,
+                    sourceUrl: 'https://trello.com/c/' + card.shortUrl,
                     details: notification.data.text,
-                    created: notification.date,
+                    notificationCreated: notification.date,
                     due: '',
                   });
-                  break;
+                  break;*/
 
-                case 'createdCard':
+                /*case 'notificationCreatedCard':
                   items.push({
                     key: itemKey,
                     origin: 'Trello',
-                    title: 'Card `' + board.name + ' > ' + card.name + '` created by ' + notification.memberCreator.fullName,
+                    title: 'Card `' + board.name + ' > ' + card.name + '` notificationCreated by ' + notification.memberCreator.fullName,
                     sourceTitle: board.name + ' > ' + card.name,
-                    sourceUrl: 'https://trello.com/c/' + card.shortLink,
+                    sourceUrl: 'https://trello.com/c/' + card.shortUrl,
                     details: notification.data.text,
-                    created: notification.date,
+                    notificationCreated: notification.date,
                     due: '',
                   });
-                  break;
+                  break;*/
 
-                case 'changeCard':
+                /*case 'changeCard':
                   let title: string;
                   cardFullName = board.name + ' > ' + card.name;
                   if (data.listBefore) {
@@ -138,42 +165,30 @@ function Fetch(): Promise<Array<Item>> {
                     origin: 'Trello',
                     title: title,
                     sourceTitle: board.name + ' > ' + card.name,
-                    sourceUrl: 'https://trello.com/c/' + card.shortLink,
+                    sourceUrl: 'https://trello.com/c/' + card.shortUrl,
                     details: notification.data.text,
-                    created: notification.date,
+                    notificationCreated: notification.date,
                     due: '',
                   });
-                  break;
+                  break;*/
 
-                case 'mentionedOnCard':
-                  cardFullName = board.name + ' > ' + card.name;
-                  items.push({
-                    key: itemKey,
-                    origin: 'Trello',
-                    title: 'Mentioned on card `' + cardFullName + '`',
-                    sourceTitle: board.name + ' > ' + card.name,
-                    sourceUrl: 'https://trello.com/c/' + card.shortLink,
-                    details: data.text,
-                    created: notification.date,
-                    due: '',
-                  });
-                  break;
-
-                case 'addAttachmentToCard':
+                /*case 'addAttachmentToCard':
                   cardFullName = board.name + ' > ' + card.name;
                   items.push({
                     key: itemKey,
                     origin: 'Trello',
                     title: 'Added attachment `' + data.name + '` to card `' + cardFullName + '`',
                     sourceTitle: board.name + ' > ' + card.name,
-                    sourceUrl: 'https://trello.com/c/' + card.shortLink,
+                    sourceUrl: 'https://trello.com/c/' + card.shortUrl,
                     details: data.text,
-                    created: notification.date,
+                    notificationCreated: notification.date,
                     due: '',
                   });
-                  break;
+                  break;*/
+
                 default:
-                  console.log(notification.type);
+                  //console.log(notification);
+                  console.log('---');
                   break;
               }
             }
@@ -191,7 +206,6 @@ function Fetch(): Promise<Array<Item>> {
 
 export {
   Item,
-  CardProps,
   Card,
   Fetch,
 };
