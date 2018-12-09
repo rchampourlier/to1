@@ -1,0 +1,16 @@
+.todos__cards {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.todos__card {
+  position: relative; /* for the absolute positioning of the footer */
+  flex: 0 1 20%;
+}
+
+.todos__card .card-footer {
+  position: absolute; /* to keep at the bottom of the card */
+  bottom: 0;
+  width: 100%;
+}
