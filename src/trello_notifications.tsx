@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as request from 'request';
+import * as moment from 'moment';
 
 const TRELLO_KEY = process.env.TRELLO_KEY;
 const TRELLO_TOKEN = process.env.TRELLO_TOKEN;
@@ -39,7 +40,7 @@ class CardComponent extends React.Component<Item, undefined> {
 
     let dueDiv: JSX.Element;
     if (this.props.cardDue) {
-      dueDiv = <div>Due {this.props.cardDue}</div>;
+      dueDiv = <div>Due {moment(this.props.cardDue).fromNow()}</div>;
     } else {
       dueDiv = <div />;
     }
@@ -61,7 +62,7 @@ class CardComponent extends React.Component<Item, undefined> {
           </span>
           {this.props.notificationInfo}
         </div>
-        <div>{this.props.notificationCreated}</div>
+        <div>Created {moment(this.props.notificationCreated).fromNow()}</div>
       </div>
     );
   }
