@@ -40,29 +40,53 @@ class CardComponent extends React.Component<Item, undefined> {
 
     let dueDiv: JSX.Element;
     if (this.props.cardDue) {
-      dueDiv = <div>Due {moment(this.props.cardDue).fromNow()}</div>;
+      dueDiv = (
+        <div className='trellonotif-card-due'>
+          <span className='trellonotif-card-due-content'>
+            <span className='icon'>
+              <i className='far fa-clock' />
+            </span>
+            <span>{moment(this.props.cardDue).format('D MMM')}</span>
+          </span>
+        </div>
+      );
     } else {
       dueDiv = <div />;
     }
     return (
-      <div className='todo-card'>
-        <div className='trello-card'>
-          <span className='icon'>
-            <i className='fab fa-trello' />
-          </span>
-          <a href={this.props.cardUrl}>{this.props.cardTitle}</a>
+      <div className='trellonotif'>
+        <div className='trellonotif-top'>
+          <div className='trellonotif-icon'>
+            <span className='icon has-text-white'>
+              <i className='fab fa-lg fa-trello' />
+            </span>
+          </div>
+          <div className='trellonotif-ref'>
+            <a className='trellonotif-card' href={this.props.cardUrl}>
+              <div className='trellonotif-card-content'>
+                {this.props.cardTitle}
+              </div>
+              { dueDiv }
+            </a>
+            <div className='trellonotif-board'>
+              <a href={this.props.boardUrl}>{this.props.boardTitle}</a>
+            </div>
+          </div>
         </div>
-        { dueDiv }
-        <div className='todo-card__context-link'>
-          <a href={this.props.boardUrl}>{this.props.boardTitle}</a>
-        </div>
-        <div className='todo-card__info'>
-          <span className='icon'>
+        <div className='trellonotif-bottom'>
+          <span className='icon is-small'>
             <i className={notificationTypeIconClassName} />
           </span>
-          {this.props.notificationInfo}
+          <span>{this.props.notificationInfo}</span>
         </div>
-        <div>Created {moment(this.props.notificationCreated).fromNow()}</div>
+        <div className='trellonotif-actions'>
+          <span className='trellonotif-created'>
+            {moment(this.props.notificationCreated).fromNow()}
+          </span>
+          <a className='button is-dark is-small'>
+            <i className='fas fa-check' />
+          </a>
+        </div>
       </div>
     );
   }

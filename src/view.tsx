@@ -24,7 +24,7 @@ class View extends React.Component<undefined, ViewState> {
       return TrelloNotifications.Card(item);
     });
     return (
-      <div className='todo-cards'>
+      <div className='trellonotifs'>
         {trelloNotificationCards}
       </div>
     );
