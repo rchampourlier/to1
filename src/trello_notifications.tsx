@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as request from 'request';
 import * as moment from 'moment';
+import { shell } from 'electron';
 
 const TRELLO_KEY = process.env.TRELLO_KEY;
 const TRELLO_TOKEN = process.env.TRELLO_TOKEN;
@@ -18,6 +19,18 @@ interface Item {
 }
 
 class CardComponent extends React.Component<Item, undefined> {
+
+  constructor(props: Item) {
+    super(props);
+
+    this.gotoTrelloCard = this.gotoTrelloCard.bind(this);
+  }
+
+  gotoTrelloCard(evt: React.MouseEvent<any>) {
+    evt.preventDefault();
+    shell.openExternal(this.props.cardUrl);
+  }
+
   render() {
     let notificationTypeIconClassName = '';
     switch (this.props.notificationType) {
@@ -62,7 +75,7 @@ class CardComponent extends React.Component<Item, undefined> {
             </span>
           </div>
           <div className='trellonotif-ref'>
-            <a className='trellonotif-card' href={this.props.cardUrl}>
+            <a className='trellonotif-card' href={this.props.cardUrl} onClick={this.gotoTrelloCard}>
               <div className='trellonotif-card-content'>
                 {this.props.cardTitle}
               </div>
