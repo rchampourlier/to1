@@ -6,8 +6,13 @@ import { shell } from 'electron';
 const TRELLO_KEY = process.env.TRELLO_KEY;
 const TRELLO_TOKEN = process.env.TRELLO_TOKEN;
 
+interface Card {
+  notifyChange: () => void;
+}
+
 interface Item {
   key: string;
+  notificationId: string;
   notificationType: string;
   notificationCreated: string;
   notificationInfo: string;
@@ -18,17 +23,44 @@ interface Item {
   boardUrl: string;
 }
 
-class CardComponent extends React.Component<Item, undefined> {
+class CardComponent extends React.Component<Item & Card, undefined> {
 
   constructor(props: Item) {
     super(props);
 
     this.gotoTrelloCard = this.gotoTrelloCard.bind(this);
+    this.markAsRead = this.markAsRead.bind(this);
   }
 
   gotoTrelloCard(evt: React.MouseEvent<any>) {
     evt.preventDefault();
     shell.openExternal(this.props.cardUrl);
+  }
+
+  markAsRead(evt: React.MouseEvent<any>): Promise<boolean> {
+    evt.preventDefault();
+
+    let notificationId: string = this.props.notificationId;
+    return new Promise<boolean>((resolve, reject) => {
+      request.put('https://api.trello.com/1/notifications/' + notificationId + '/unread', {
+        'qs': {
+          'key': TRELLO_KEY,
+          'token': TRELLO_TOKEN,
+          'value': false,
+        }
+      }, (error, response, body) => {
+          if (error == null && response && response.statusCode === 200) {
+            this.props.notifyChange();
+            resolve(true);
+          } else if (error !== null) {
+            console.log(response);
+            reject(new Error(error));
+          } else {
+            reject(new Error('Non-200 status code: ' + response.statusCode + ' (' + body + ')'));
+          }
+        }
+      );
+    });
   }
 
   render() {
@@ -96,7 +128,7 @@ class CardComponent extends React.Component<Item, undefined> {
           <span className='trellonotif-created'>
             {moment(this.props.notificationCreated).fromNow()}
           </span>
-          <a className='button is-dark is-small'>
+          <a className='button is-dark is-small' onClick={this.markAsRead}>
             <i className='fas fa-check' />
           </a>
         </div>
@@ -105,10 +137,11 @@ class CardComponent extends React.Component<Item, undefined> {
   }
 }
 
-function Card(item: Item) {
+function Card(item: Item, notifyChange: () => void) {
   return (
     <CardComponent
       key={item.key}
+      notificationId={item.notificationId}
       notificationType={item.notificationType}
       notificationCreated={item.notificationCreated}
       notificationInfo={item.notificationInfo}
@@ -117,6 +150,7 @@ function Card(item: Item) {
       cardDue={item.cardDue}
       boardTitle={item.boardTitle}
       boardUrl={item.boardUrl}
+      notifyChange={notifyChange}
     />
   );
 }
@@ -134,7 +168,7 @@ function Fetch(): Promise<Array<Item>> {
           let notifications = JSON.parse(body);
 
           notifications.forEach((notification: any) => {
-            if (true || notification.unread) {
+            if (notification.unread) {
               let
                 data = notification.data,
                 itemKey = 'trello-notification__' + notification.type + '__' + notification.date;
@@ -144,6 +178,7 @@ function Fetch(): Promise<Array<Item>> {
                 case 'cardDueSoon':
                   items.push({
                     key: itemKey,
+                    notificationId: notification.id,
                     notificationType: notification.type,
                     notificationCreated: notification.date,
                     notificationInfo: 'Due soon',
@@ -158,6 +193,7 @@ function Fetch(): Promise<Array<Item>> {
                 case 'mentionedOnCard':
                   items.push({
                     key: itemKey,
+                    notificationId: notification.id,
                     notificationType: notification.type,
                     notificationCreated: notification.date,
                     notificationInfo: data.text,
@@ -172,6 +208,7 @@ function Fetch(): Promise<Array<Item>> {
                 case 'commentCard':
                   items.push({
                     key: itemKey,
+                    notificationId: notification.id,
                     notificationType: notification.type,
                     notificationCreated: notification.date,
                     notificationInfo: data.text,
@@ -186,6 +223,7 @@ function Fetch(): Promise<Array<Item>> {
                 case 'notificationCreatedCard':
                   items.push({
                     key: itemKey,
+                    notificationId: notification.id,
                     notificationType: notification.type,
                     notificationCreated: notification.date,
                     notificationInfo: data.text,
@@ -217,6 +255,7 @@ function Fetch(): Promise<Array<Item>> {
                   }
                   items.push({
                     key: itemKey,
+                    notificationId: notification.id,
                     notificationType: notification.type,
                     notificationCreated: notification.date,
                     notificationInfo: info,
@@ -231,6 +270,7 @@ function Fetch(): Promise<Array<Item>> {
                 case 'addAttachmentToCard':
                   items.push({
                     key: itemKey,
+                    notificationId: notification.id,
                     notificationType: notification.type,
                     notificationCreated: notification.date,
                     notificationInfo: 'Added attachment',

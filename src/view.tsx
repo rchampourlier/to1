@@ -9,8 +9,11 @@ class View extends React.Component<undefined, ViewState> {
 
   constructor() {
     super();
-    let trelloNotificationItems: Array<TrelloNotifications.Item> = [];
-    this.state = {trelloNotificationItems: trelloNotificationItems};
+    this.state = {
+      trelloNotificationItems: []
+    };
+
+    this.updateItems = this.updateItems.bind(this);
   }
 
   componentDidMount() {
@@ -19,12 +22,18 @@ class View extends React.Component<undefined, ViewState> {
     });
   }
 
+  updateItems(): void {
+    TrelloNotifications.Fetch().then((items) => {
+      this.setState({trelloNotificationItems: items});
+    });
+  }
+
   render() {
     const trelloNotificationCards = this.state.trelloNotificationItems.map((item) => {
-      return TrelloNotifications.Card(item);
+      return TrelloNotifications.Card(item, this.updateItems);
     });
     return (
-      <div className='trellonotifs'>
+      <div className='trellonotif-cards'>
         {trelloNotificationCards}
       </div>
     );
