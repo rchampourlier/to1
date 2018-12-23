@@ -1,44 +1,89 @@
 import * as React from 'react';
 import * as request from 'request';
+import { shell } from 'electron';
+import * as out from './interfaces';
 
-interface Item {
-  origin: string;
+const ATLASSIAN_USERNAME = process.env.ATLASSIAN_USERNAME;
+const ATLASSIAN_PASSWORD = process.env.ATLASSIAN_PASSWORD;
+const TYPE = 'confluence-inline-task';
+
+type Item = out.Item & {
   title: string;
   sourceTitle: string;
   sourceUrl: string;
   details: string;
-  created: string;
   due: string;
-}
+};
 
-interface CardProps {
-  title: string;
-}
+class CardComponent extends React.Component<Item & out.Card, undefined> {
+  constructor(props: Item) {
+    super(props);
 
-const ATLASSIAN_USERNAME = process.env.ATLASSIAN_USERNAME;
-const ATLASSIAN_PASSWORD = process.env.ATLASSIAN_PASSWORD;
+    this.gotoConfluenceContext = this.gotoConfluenceContext.bind(this);
+    this.check = this.check.bind(this);
+  }
 
-class Card extends React.Component<CardProps, undefined> {
+  gotoConfluenceContext(evt: React.MouseEvent<any>) {
+    evt.preventDefault();
+    shell.openExternal(this.props.sourceUrl);
+  }
+
+  check(evt: React.MouseEvent<any>): Promise<boolean> {
+    evt.preventDefault();
+
+    //let notificationId: string = this.props.notificationId;
+    return new Promise<boolean>((resolve, reject) => {
+      let tmp = true;
+      if (tmp) {
+        resolve(true);
+      } else {
+        reject(new Error('not implemented'));
+      }
+      /*
+      request.put('https://api.trello.com/1/notifications/' + notificationId + '/unread', {
+        'qs': {
+          'key': TRELLO_KEY,
+          'token': TRELLO_TOKEN,
+          'value': false,
+        }
+      }, (error, response, body) => {
+          if (error == null && response && response.statusCode === 200) {
+            this.props.notifyChange();
+            resolve(true);
+          } else if (error !== null) {
+            console.log(response);
+            reject(new Error(error));
+          } else {
+            reject(new Error('Non-200 status code: ' + response.statusCode + ' (' + body + ')'));
+          }
+        }
+      );*/
+    });
+  }
+
   render() {
     return (
-      <div className='todos__card card'>
-        <header className='card-header'>
-          <p className='card-header-title'>
-            {this.props.title}
-          </p>
-        </header>
-        <div className='card-content'>
-          <div className='content'>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
-          </div>
-        </div>
-        <footer className='card-footer'>
-          <a href='#' className='card-footer-item'>Archive</a>
-          <a href='#' className='card-footer-item'>Pin</a>
-        </footer>
+      <div className='confluencetask'>
+        {this.props.title}
       </div>
     );
   }
+}
+
+function BuildCard(item: Item, notifyChange: () => void): JSX.Element {
+  return (
+    <CardComponent
+      key={item.key}
+      created={item.created}
+      type={item.type}
+      sourceTitle={item.sourceTitle}
+      sourceUrl={item.sourceUrl}
+      details={item.details}
+      due={item.due}
+      title={item.title}
+      notifyChange={notifyChange}
+    />
+  );
 }
 
 function Fetch(): Promise<Array<Item>> {
@@ -53,12 +98,13 @@ function Fetch(): Promise<Array<Item>> {
           let tasks = JSON.parse(body);
           tasks.forEach( (task: any) => {
             todos.push({
-              origin: 'Confluence',
+              key: TYPE + '__' + task.created,
+              created: task.created,
+              type: TYPE,
               title: task.title,
               sourceTitle: task.item.title,
               sourceUrl: task.item.url,
               details: '',
-              created: task.created,
               due: ''
             });
           });
@@ -75,7 +121,6 @@ function Fetch(): Promise<Array<Item>> {
 
 export {
   Item,
-  CardProps,
-  Card,
   Fetch,
+  BuildCard,
 };
