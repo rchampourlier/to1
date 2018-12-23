@@ -2,7 +2,7 @@ body.has-navbar-fixed-top-with-rounded-tabs {
   padding-top: 3.6rem;
 }
 
-.trellonotif-cards {
+.cards {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;

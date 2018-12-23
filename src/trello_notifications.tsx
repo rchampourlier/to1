@@ -2,29 +2,24 @@ import * as React from 'react';
 import * as request from 'request';
 import * as moment from 'moment';
 import { shell } from 'electron';
+import * as out from './interfaces';
 
 const TRELLO_KEY = process.env.TRELLO_KEY;
 const TRELLO_TOKEN = process.env.TRELLO_TOKEN;
+const TYPE = 'trello-notification';
 
-interface Card {
-  notifyChange: () => void;
-}
-
-interface Item {
-  key: string;
+type Item = out.Item & {
   notificationId: string;
   notificationType: string;
-  notificationCreated: string;
   notificationInfo: string;
   cardTitle: string;
   cardUrl: string;
   cardDue: string | void;
   boardTitle: string;
   boardUrl: string;
-}
+};
 
-class CardComponent extends React.Component<Item & Card, undefined> {
-
+class CardComponent extends React.Component<Item & out.Card, undefined> {
   constructor(props: Item) {
     super(props);
 
@@ -126,7 +121,7 @@ class CardComponent extends React.Component<Item & Card, undefined> {
         </div>
         <div className='trellonotif-actions'>
           <span className='trellonotif-created'>
-            {moment(this.props.notificationCreated).fromNow()}
+            {moment(this.props.created).fromNow()}
           </span>
           <a className='button is-dark is-small' onClick={this.markAsRead}>
             <i className='fas fa-check' />
@@ -137,13 +132,14 @@ class CardComponent extends React.Component<Item & Card, undefined> {
   }
 }
 
-function Card(item: Item, notifyChange: () => void) {
+function BuildCard(item: Item, notifyChange: () => void) {
   return (
     <CardComponent
       key={item.key}
+      created={item.created}
+      type={item.type}
       notificationId={item.notificationId}
       notificationType={item.notificationType}
-      notificationCreated={item.notificationCreated}
       notificationInfo={item.notificationInfo}
       cardTitle={item.cardTitle}
       cardUrl={item.cardUrl}
@@ -171,16 +167,17 @@ function Fetch(): Promise<Array<Item>> {
             if (notification.unread) {
               let
                 data = notification.data,
-                itemKey = 'trello-notification__' + notification.type + '__' + notification.date;
+                itemKey = TYPE + '__' + notification.type + '__' + notification.date;
 
               switch (notification.type) {
 
                 case 'cardDueSoon':
                   items.push({
                     key: itemKey,
+                    created: notification.date,
+                    type: TYPE,
                     notificationId: notification.id,
                     notificationType: notification.type,
-                    notificationCreated: notification.date,
                     notificationInfo: 'Due soon',
                     cardTitle: data.card.name,
                     cardUrl: 'https://trello.com/c/' + data.card.shortLink,
@@ -193,9 +190,10 @@ function Fetch(): Promise<Array<Item>> {
                 case 'mentionedOnCard':
                   items.push({
                     key: itemKey,
+                    created: notification.date,
+                    type: 'trello-notification',
                     notificationId: notification.id,
                     notificationType: notification.type,
-                    notificationCreated: notification.date,
                     notificationInfo: data.text,
                     cardTitle: data.card.name,
                     cardUrl: 'https://trello.com/c/' + data.card.shortLink,
@@ -208,9 +206,10 @@ function Fetch(): Promise<Array<Item>> {
                 case 'commentCard':
                   items.push({
                     key: itemKey,
+                    created: notification.date,
+                    type: 'trello-notification',
                     notificationId: notification.id,
                     notificationType: notification.type,
-                    notificationCreated: notification.date,
                     notificationInfo: data.text,
                     cardTitle: data.card.name,
                     cardUrl: 'https://trello.com/c/' + data.card.shortLink,
@@ -223,9 +222,10 @@ function Fetch(): Promise<Array<Item>> {
                 case 'notificationCreatedCard':
                   items.push({
                     key: itemKey,
+                    created: notification.date,
+                    type: 'trello-notification',
                     notificationId: notification.id,
                     notificationType: notification.type,
-                    notificationCreated: notification.date,
                     notificationInfo: data.text,
                     cardTitle: data.card.name,
                     cardUrl: 'https://trello.com/c/' + data.card.shortLink,
@@ -255,9 +255,10 @@ function Fetch(): Promise<Array<Item>> {
                   }
                   items.push({
                     key: itemKey,
+                    created: notification.date,
+                    type: 'trello-notification',
                     notificationId: notification.id,
                     notificationType: notification.type,
-                    notificationCreated: notification.date,
                     notificationInfo: info,
                     cardTitle: data.card.name,
                     cardUrl: 'https://trello.com/c/' + data.card.shortLink,
@@ -270,9 +271,10 @@ function Fetch(): Promise<Array<Item>> {
                 case 'addAttachmentToCard':
                   items.push({
                     key: itemKey,
+                    created: notification.date,
+                    type: 'trello-notification',
                     notificationId: notification.id,
                     notificationType: notification.type,
-                    notificationCreated: notification.date,
                     notificationInfo: 'Added attachment',
                     cardTitle: data.card.name,
                     cardUrl: 'https://trello.com/c/' + data.card.shortLink,
@@ -299,6 +301,6 @@ function Fetch(): Promise<Array<Item>> {
 
 export {
   Item,
-  Card,
   Fetch,
+  BuildCard,
 };
