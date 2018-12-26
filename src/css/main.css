@@ -1,16 +1,136 @@
-.todos__cards {
+body.has-navbar-fixed-top-with-rounded-tabs {
+  padding-top: 3.6rem;
+}
+
+.trellonotifs {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
+  padding: 0px 0px 5px 6px;
 }
 
-.todos__card {
+.trellonotif {
+  background-color: #f5f6f7;
+  border-radius: 3px;
+  display: flex;
+  flex: 0 1 calc(100% / 4 - 6px);
+  flex-direction: column;
+  margin: 6px 6px 0 0;
   position: relative; /* for the absolute positioning of the footer */
-  flex: 0 1 20%;
 }
 
-.todos__card .card-footer {
-  position: absolute; /* to keep at the bottom of the card */
-  bottom: 0;
+.trellonotif-top {
+  background-color: #026AA7;
+  border-radius: 3px 3px 0 0;
+  display: flex;
+  padding: 5px;
+}
+
+.trellonotif-icon {
+  display: flex;
+  flex-direction: column;
+}
+
+.trellonotif-ref {
+  padding-left: 0.25rem;
   width: 100%;
+}
+
+.trellonotif-card {
+  background: white;
+  border-radius: 3px;
+  box-sizing: border-box;
+  box-shadow: rgba(9, 45, 66, 0.25) 0px 1px 0px 0px;
+  color: black;
+  display: block; /* because it's an A */
+  font-size: 14px;
+  line-height: 1.2;
+  padding-bottom: 6px;
+}
+
+.trellonotif-card:hover {
+  background-color: rgb(245, 246, 247);
+  cursor: pointer;
+}
+
+.trellonotif-card-content {
+  margin: 0px;
+  padding: 6px 8px 0px;
+}
+
+.trellonotif-card-due {
+  max-width: calc(100% - 6px);
+  box-sizing: border-box;
+  display: inline-block;
+  padding-left: 6px;
+}
+
+.trellonotif-card-due-content {
+  background-color: rgb(242, 214, 0);
+  color: white;
+  border-radius: 3px;
+  display: inline-block;
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  height: 24px;
+  line-height: 24px;
+  margin-top: 6px;
+  min-height: 24px;
+  overflow: hidden;
+  padding: 0 6px 0 0;
+  text-overflow: ellipsis;
+  float: left;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.trellonotif-board {
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+.trellonotif-board a {
+  color: white;
+}
+
+.trellonotif-board a:hover {
+  text-decoration: underline;
+}
+
+.trellonotif-bottom {
+  background-color: #f5f6f7;
+  border-left: solid 1px #026AA7;
+  border-radius: 0 0 3px 3px;
+  border-right: solid 1px #026AA7;
+  box-shadow: rgba(9, 45, 66, 0.25) 0px -4px 6px -2px;
+  flex-grow: 1;
+  font-size: 14px;
+  padding: 5px;
+  line-height: 1.3;
+  min-height: 90px;
+  max-height: 150px;
+  overflow: hidden;
+}
+
+.trellonotif-bottom .icon {
+  margin-right: 4px;
+}
+
+.trellonotif-actions {
+  background-color: #4B4B4B;
+  border-radius: 0 0 3px 3px;
+  bottom: 0;
+  box-shadow: rgba(9, 45, 66, 0.25) 0px -4px 6px -2px;
+  display: flex;
+  position: absolute;
+  width: 100%;
+}
+
+.trellonotif-created {
+  border-radius: 3px;
+  color: #FFF;
+  flex-grow: 1; /* pushes the buttons to the right */
+  font-size: 12px;
+  padding: 4px;
 }
